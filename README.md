@@ -215,9 +215,4 @@ Let me know if you'd like to add:
 - **Screenshots** or CLI output
 - **Contributors** or acknowledgments
 
-You can now commit and push this file:
-
-git add README.md
-git commit -m "Add complete README with setup and API guide"
-git push origin develop
 
