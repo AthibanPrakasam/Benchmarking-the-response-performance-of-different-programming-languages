@@ -2,8 +2,7 @@ from fastapi import FastAPI, HTTPException
 from services.service_registry import SERVICES, register_service
 from utils.benchmark import benchmark_services, benchmark_single, benchmark_services_with_payload
 from pydantic import BaseModel
-from typing import Dict, Any
-import asyncio
+from typing import Dict, Any, Optional
 
 app = FastAPI()
 
@@ -16,14 +15,14 @@ def get_languages():
     return {"languages": list(SERVICES.keys())}
 
 @app.get("/benchmark")
-async def run_benchmark():
-    return {"results": await benchmark_services(SERVICES)}
+def run_benchmark(rounds: Optional[int] = 5):
+    return {"results": benchmark_services(SERVICES, rounds)}
 
 @app.get("/benchmark/{language}")
-def run_single(language: str):
+def run_single(language: str, rounds: Optional[int] = 5):
     if language not in SERVICES:
         raise HTTPException(status_code=404, detail="Language not registered")
-    return benchmark_single(language, SERVICES[language])
+    return benchmark_single(language, SERVICES[language], rounds)
 
 @app.post("/services")
 def add_service(data: dict):
@@ -36,9 +35,10 @@ def add_service(data: dict):
 
 class DynamicPayload(BaseModel):
     payload: Dict[str, Any]
+    rounds: Optional[int] = 5
 
-@app.post("/benchmark-payload")
-async def benchmark_payload(request: DynamicPayload):
+@app.post("/benchmark-payload", summary="Send custom JSON payload to all services")
+def benchmark_payload(request: DynamicPayload):
     return {
-        "results": await benchmark_services_with_payload(SERVICES, request.payload)
+        "results": benchmark_services_with_payload(SERVICES, request.payload, request.rounds)
     }
