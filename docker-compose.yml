@@ -1,6 +1,8 @@
 version: '3.8'
 
 services:
+
+
   python_api:
     build: ./services/python_api
     ports:
@@ -21,3 +23,13 @@ services:
       context: ./services/java_service
     ports:
       - "8004:8080"
+
+  coordinator_api:
+    build: .
+    ports:
+      - "8000:8000"
+    depends_on:
+      - python_api
+      - go_api
+      - node_api
+      - java_api

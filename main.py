@@ -24,7 +24,7 @@ def run_single(language: str, rounds: Optional[int] = 5):
         raise HTTPException(status_code=404, detail="Language not registered")
     return benchmark_single(language, SERVICES[language], rounds)
 
-@app.post("/services")
+'''@app.post("/services")
 def add_service(data: dict):
     lang = data.get("language")
     url = data.get("url")
@@ -32,7 +32,7 @@ def add_service(data: dict):
         raise HTTPException(status_code=400, detail="Language and URL required")
     register_service(lang, url)
     return {"message": f"{lang} service registered successfully."}
-
+'''
 class DynamicPayload(BaseModel):
     payload: Dict[str, Any]
     rounds: Optional[int] = 5
