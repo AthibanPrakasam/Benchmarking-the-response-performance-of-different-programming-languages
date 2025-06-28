@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  python_api:
+    build: ./services/python_api
+    ports:
+      - "8001:8001"
+
+  go_api:
+    build: ./services/go_api
+    ports:
+      - "8002:8002"
+
+  node_api:
+    build: ./services/node_api
+    ports:
+      - "8003:8003"
+
+  java_api:
+    build:
+      context: ./services/java_service
+    ports:
+      - "8004:8080"
