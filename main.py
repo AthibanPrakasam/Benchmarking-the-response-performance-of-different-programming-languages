@@ -3,6 +3,7 @@ from services.service_registry import SERVICES, register_service
 from utils.benchmark import benchmark_services, benchmark_single, benchmark_services_with_payload
 from pydantic import BaseModel
 from typing import Dict, Any
+import asyncio
 
 app = FastAPI()
 
@@ -15,8 +16,8 @@ def get_languages():
     return {"languages": list(SERVICES.keys())}
 
 @app.get("/benchmark")
-def run_benchmark():
-    return {"results": benchmark_services(SERVICES)}
+async def run_benchmark():
+    return {"results": await benchmark_services(SERVICES)}
 
 @app.get("/benchmark/{language}")
 def run_single(language: str):
@@ -36,8 +37,8 @@ def add_service(data: dict):
 class DynamicPayload(BaseModel):
     payload: Dict[str, Any]
 
-@app.post("/benchmark-payload", summary="Send custom JSON payload to all services")
-def benchmark_payload(request: DynamicPayload):
+@app.post("/benchmark-payload")
+async def benchmark_payload(request: DynamicPayload):
     return {
-        "results": benchmark_services_with_payload(SERVICES, request.payload)
+        "results": await benchmark_services_with_payload(SERVICES, request.payload)
     }
